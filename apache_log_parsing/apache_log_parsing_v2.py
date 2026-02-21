@@ -4,7 +4,7 @@ import csv
 import argparse
 
 
-logreg="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+logreg = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 
 # Create the parser
 my_parser = argparse.ArgumentParser(description='Reading the log and csv file')
