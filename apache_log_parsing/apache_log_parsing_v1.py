@@ -9,7 +9,7 @@ my_parser.add_argument("--l","--logfile",
 args = my_parser.parse_args()
 
 
-logreg="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+logreg = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 with args.logfile as f:
     fread = f.read()
     ip_list = re.findall(logreg, fread)

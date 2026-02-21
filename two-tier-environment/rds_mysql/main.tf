@@ -2,6 +2,10 @@ provider "aws" {
   region = "us-west-2"
 }
 
+data "aws_vpc" "selected" {
+  id = "${var.vpc_id}"
+}
+
 resource "aws_db_subnet_group" "rds-private-subnet" {
   name       = "rds-private-subnet-group"
   subnet_ids = ["${var.rds_subnet1}", "${var.rds_subnet2}"]
@@ -19,7 +23,7 @@ resource "aws_security_group_rule" "mysql_inbound_access" {
   security_group_id = "${aws_security_group.rds-sg.id}"
   to_port           = 3306
   type              = "ingress"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = ["${data.aws_vpc.selected.cidr_block}"]
 }
 
 resource "aws_db_instance" "my_test_mysql" {
@@ -30,7 +34,7 @@ resource "aws_db_instance" "my_test_mysql" {
   instance_class              = "${var.db_instance}"
   name                        = "myrdstestmysql"
   username                    = "admin"
-  password                    = "admin123"
+  password                    = "${var.db_password}"
   parameter_group_name        = "default.mysql5.7"
   db_subnet_group_name        = "${aws_db_subnet_group.rds-private-subnet.name}"
   vpc_security_group_ids      = ["${aws_security_group.rds-sg.id}"]
@@ -40,5 +44,6 @@ resource "aws_db_instance" "my_test_mysql" {
   backup_window               = "22:00-23:00"
   maintenance_window          = "Sat:00:00-Sat:03:00"
   multi_az                    = true
+  publicly_accessible         = false
   skip_final_snapshot         = true
 }
